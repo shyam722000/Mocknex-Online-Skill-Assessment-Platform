@@ -381,12 +381,11 @@ export default function ExamPage() {
     }
   };
 
-const openComprehension = () => {
-  if (currentQuestion?.comprehension) {
-    dispatch(setShowComprehension(true));
-  }
-};
-
+  const openComprehension = () => {
+    if (currentQuestion?.comprehension) {
+      dispatch(setShowComprehension(true));
+    }
+  };
 
   const formatTime = (secs: number | null) => {
     if (secs === null || secs < 0) return "00:00";

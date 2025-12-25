@@ -47,6 +47,12 @@ export default function ResultPage() {
           .eq("slug", attempt.subject)
           .single();
 
+        // Add null check for subjectRow
+        if (!subjectRow) {
+          setError("Subject not found");
+          return;
+        }
+
         // Fetch questions with options
         const { data: questionsData } = await supabase
           .from("questions")
@@ -79,7 +85,7 @@ export default function ResultPage() {
         console.log("Answers Map:", answersMap);
 
         // Format questions with user answers and correct answers
-        const formatted = questionsData.map((q, index) => {
+        const formatted = questionsData?.map((q, index) => {
           const userSelectedOptionId = answersMap[String(q.id)];
 
           console.log(`Question ${q.id}:`, {
@@ -119,7 +125,7 @@ export default function ResultPage() {
             userSelectedOption,
             status,
           };
-        });
+        }) || [];
 
         console.log("Formatted Questions:", formatted);
         setQuestions(formatted);
