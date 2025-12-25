@@ -8,18 +8,12 @@ export default function GoogleLoginButton() {
 
   if (isLoading) {
     return (
-      <div className="text-center py-3 text-gray-500 text-sm">
-        Loading...
-      </div>
+      <div className="text-center py-3 text-gray-500 text-sm">Loading...</div>
     );
   }
 
   if (user) {
-    return (
-      <div className="flex flex-col items-center gap-3 mt-2">
-        
-      </div>
-    );
+    return <div className="flex flex-col items-center gap-3 mt-2"></div>;
   }
 
   return (
@@ -48,3 +42,6 @@ export default function GoogleLoginButton() {
     </button>
   );
 }
+
+
+// jddd
