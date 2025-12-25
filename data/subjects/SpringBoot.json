@@ -1,0 +1,310 @@
+{
+  "subject": "spring-boot",
+  "questions": [
+
+
+    {
+      "question": "What is the main purpose of Spring Boot?",
+      "options": [
+        "To replace Java language",
+        "To simplify Spring application setup and configuration",
+        "To build frontend applications",
+        "To manage databases only"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "What feature allows Spring Boot to reduce boilerplate configuration?",
+      "options": [
+        "XML configuration",
+        "Auto-configuration",
+        "Manual bean creation",
+        "JVM tuning"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Which annotation is used to create a Spring Boot application?",
+      "options": [
+        "@EnableSpring",
+        "@SpringBootApplication",
+        "@SpringApp",
+        "@BootApplication"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "What does @SpringBootApplication internally include?",
+      "options": [
+        "@Configuration, @EnableAutoConfiguration, @ComponentScan",
+        "@Controller, @Service, @Repository",
+        "@Bean and @Autowired",
+        "@RestController only"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "question": "Which embedded server is commonly used by Spring Boot?",
+      "options": [
+        "JBoss",
+        "GlassFish",
+        "Tomcat",
+        "WebLogic"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "question": "Which file is commonly used for Spring Boot configuration?",
+      "options": [
+        "config.xml",
+        "application.properties or application.yml",
+        "spring.xml",
+        "boot.config"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Which annotation is used to expose REST APIs?",
+      "options": [
+        "@Controller",
+        "@Service",
+        "@RestController",
+        "@Component"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "question": "Which dependency is required to build REST APIs?",
+      "options": [
+        "spring-boot-starter-data-jpa",
+        "spring-boot-starter-web",
+        "spring-boot-starter-test",
+        "spring-boot-starter-security"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Which annotation maps HTTP GET requests?",
+      "options": [
+        "@Request",
+        "@GetMapping",
+        "@PostMapping",
+        "@FetchMapping"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "What does dependency injection help achieve?",
+      "options": [
+        "Tight coupling",
+        "Better performance",
+        "Loose coupling and easier testing",
+        "Manual object creation"
+      ],
+      "correctIndex": 2
+    },
+
+    {
+      "question": "You want to expose a REST API returning JSON for frontend consumption. Which approach is correct?",
+      "options": [
+        "Use @Controller with JSP",
+        "Use @RestController returning objects",
+        "Use XML responses",
+        "Use Servlets directly"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "You want to change the default server port from 8080 to 9090. Where should this be configured?",
+      "options": [
+        "In Java main method",
+        "In application.properties",
+        "In pom.xml",
+        "In controller class"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "You want to connect Spring Boot to a database using ORM. What is commonly used?",
+      "options": [
+        "JDBC only",
+        "Hibernate with Spring Data JPA",
+        "Manual SQL files",
+        "File-based storage"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "A REST API must accept JSON input from a frontend. Which annotation maps request body?",
+      "options": [
+        "@RequestParam",
+        "@RequestHeader",
+        "@RequestBody",
+        "@PathVariable"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "question": "You want to handle different environments like dev and prod. What should you use?",
+      "options": [
+        "Multiple controllers",
+        "Spring Profiles",
+        "Separate applications",
+        "Different JVMs"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "You want to automatically create database tables from entities. What property helps?",
+      "options": [
+        "spring.sql.init",
+        "hibernate.ddl-auto",
+        "spring.jpa.show-sql",
+        "server.port"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "You want to validate request payload fields. Which annotation is used?",
+      "options": [
+        "@Validate",
+        "@NotNull / @Size",
+        "@Check",
+        "@Verify"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "You want to handle exceptions globally for REST APIs. What should you use?",
+      "options": [
+        "try-catch in every controller",
+        "@ControllerAdvice",
+        "@Service class",
+        "Servlet filters"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "A microservice should register itself for discovery. What tool is commonly used?",
+      "options": [
+        "Spring MVC",
+        "Eureka Server",
+        "Hibernate",
+        "JPA Repository"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "You want to secure APIs using token-based authentication. What is commonly used?",
+      "options": [
+        "Spring MVC",
+        "Spring Data JPA",
+        "Spring Security with JWT",
+        "JDBC Template"
+      ],
+      "correctIndex": 2
+    },
+
+    {
+      "question": "Why does Spring Boot prefer convention over configuration?",
+      "options": [
+        "To remove flexibility",
+        "To reduce development time and boilerplate",
+        "To enforce strict coding rules",
+        "To avoid annotations"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Why is @RestController preferred over @Controller for REST APIs?",
+      "options": [
+        "It improves performance",
+        "It automatically serializes responses to JSON",
+        "It avoids database calls",
+        "It enables security"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Why is embedded server useful in Spring Boot?",
+      "options": [
+        "To increase memory usage",
+        "To deploy applications without external servers",
+        "To avoid HTTP",
+        "To replace JVM"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Why is Spring Data JPA widely used?",
+      "options": [
+        "It avoids SQL completely",
+        "It reduces boilerplate repository code",
+        "It improves frontend performance",
+        "It replaces databases"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Why should business logic not be placed in controllers?",
+      "options": [
+        "Controllers are slow",
+        "To maintain separation of concerns",
+        "To avoid annotations",
+        "To reduce memory"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Why are DTOs used instead of entities in API responses?",
+      "options": [
+        "To reduce Java code",
+        "To control exposed data and improve security",
+        "To increase response size",
+        "To avoid JSON"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Why is stateless REST API design preferred?",
+      "options": [
+        "To reduce frontend code",
+        "To improve scalability and reliability",
+        "To increase session storage",
+        "To simplify UI"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Why does Spring Boot encourage externalized configuration?",
+      "options": [
+        "To avoid recompilation",
+        "To support different environments easily",
+        "To reduce security",
+        "To remove properties files"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Why should blocking calls be avoided in microservices?",
+      "options": [
+        "They increase code readability",
+        "They reduce scalability and throughput",
+        "They improve debugging",
+        "They simplify logic"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "question": "Why is Spring Boot suitable for microservices architecture?",
+      "options": [
+        "Because it supports only monoliths",
+        "Because it is lightweight and production-ready",
+        "Because it avoids REST",
+        "Because it removes databases"
+      ],
+      "correctIndex": 1
+    }
+
+  ]
+}

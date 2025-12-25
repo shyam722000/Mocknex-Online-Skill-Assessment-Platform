@@ -1,0 +1,163 @@
+{
+  "html": {
+    "questions": [
+      {
+        "question_id": 1,
+        "number": 1,
+        "question": "What does HTML stand for?",
+        "options": [
+          { "id": 1, "option": "Hyper Text Markup Language" },
+          { "id": 2, "option": "High Text Machine Language" },
+          { "id": 3, "option": "Hyperlinks and Text Markup Language" },
+          { "id": 4, "option": "Home Tool Markup Language" }
+        ],
+        "correct_option_id": 1
+      },
+      {
+        "question_id": 2,
+        "number": 2,
+        "question": "Which HTML tag is used to create a hyperlink?",
+        "options": [
+          { "id": 1, "option": "<a>" },
+          { "id": 2, "option": "<link>" },
+          { "id": 3, "option": "<href>" },
+          { "id": 4, "option": "<nav>" }
+        ],
+        "correct_option_id": 1
+      },
+      {
+        "question_id": 3,
+        "number": 3,
+        "question": "Which attribute is used to provide an alternate text for an image?",
+        "options": [
+          { "id": 1, "option": "title" },
+          { "id": 2, "option": "src" },
+          { "id": 3, "option": "alt" },
+          { "id": 4, "option": "href" }
+        ],
+        "correct_option_id": 3
+      }
+    ]
+  },
+
+  "css": {
+    "questions": [
+      {
+        "question_id": 1,
+        "number": 1,
+        "question": "What does CSS stand for?",
+        "options": [
+          { "id": 1, "option": "Creative Style Sheets" },
+          { "id": 2, "option": "Cascading Style Sheets" },
+          { "id": 3, "option": "Computer Style Sheets" },
+          { "id": 4, "option": "Colorful Style Sheets" }
+        ],
+        "correct_option_id": 2
+      },
+      {
+        "question_id": 2,
+        "number": 2,
+        "question": "Which property is used to change text color in CSS?",
+        "options": [
+          { "id": 1, "option": "font-color" },
+          { "id": 2, "option": "text-color" },
+          { "id": 3, "option": "color" },
+          { "id": 4, "option": "foreground" }
+        ],
+        "correct_option_id": 3
+      }
+    ]
+  },
+
+  "javascript": {
+    "questions": [
+      {
+        "question_id": 1,
+        "number": 1,
+        "question": "Which keyword is used to declare a variable in JavaScript?",
+        "options": [
+          { "id": 1, "option": "var" },
+          { "id": 2, "option": "let" },
+          { "id": 3, "option": "const" },
+          { "id": 4, "option": "All of the above" }
+        ],
+        "correct_option_id": 4
+      },
+      {
+        "question_id": 2,
+        "number": 2,
+        "question": "Which method converts JSON to a JavaScript object?",
+        "options": [
+          { "id": 1, "option": "JSON.stringify()" },
+          { "id": 2, "option": "JSON.parse()" },
+          { "id": 3, "option": "JSON.convert()" },
+          { "id": 4, "option": "JSON.toObject()" }
+        ],
+        "correct_option_id": 2
+      }
+    ]
+  },
+
+  "python": {
+    "questions": [
+      {
+        "question_id": 1,
+        "number": 1,
+        "question": "Which keyword is used to define a function in Python?",
+        "options": [
+          { "id": 1, "option": "function" },
+          { "id": 2, "option": "def" },
+          { "id": 3, "option": "fun" },
+          { "id": 4, "option": "define" }
+        ],
+        "correct_option_id": 2
+      },
+      {
+        "question_id": 2,
+        "number": 2,
+        "question": "Which data type is immutable in Python?",
+        "options": [
+          { "id": 1, "option": "List" },
+          { "id": 2, "option": "Dictionary" },
+          { "id": 3, "option": "Tuple" },
+          { "id": 4, "option": "Set" }
+        ],
+        "correct_option_id": 3
+      }
+    ]
+  },
+
+  "java": {
+    "questions": [
+      {
+        "question_id": 1,
+        "number": 1,
+        "question": "Which keyword is used to inherit a class in Java?",
+        "options": [
+          { "id": 1, "option": "implements" },
+          { "id": 2, "option": "extends" },
+          { "id": 3, "option": "inherits" },
+          { "id": 4, "option": "super" }
+        ],
+        "correct_option_id": 2
+      }
+    ]
+  },
+
+  "dsa": {
+    "questions": [
+      {
+        "question_id": 1,
+        "number": 1,
+        "question": "What is the time complexity of binary search?",
+        "options": [
+          { "id": 1, "option": "O(n)" },
+          { "id": 2, "option": "O(log n)" },
+          { "id": 3, "option": "O(n log n)" },
+          { "id": 4, "option": "O(1)" }
+        ],
+        "correct_option_id": 2
+      }
+    ]
+  }
+}
