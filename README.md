@@ -1,4 +1,4 @@
-# 📝 NOVIINDUS Online Exam Portal
+
 
 A fully functional online examination system built using **Next.js (App Router)** and **Redux Toolkit**.  
 Includes authentication, protected routes, live question status tracking, countdown timer, and secure restrictions on refresh/back navigation.
