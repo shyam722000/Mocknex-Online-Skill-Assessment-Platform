@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { supabase } from "../lib/supabase";
 import { Navbar } from "@/components/Navbar";
 
-export default function ResultPage() {
+function ResultPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const attemptId = searchParams.get("attempt_id");
@@ -415,5 +415,20 @@ export default function ResultPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResultPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#e9f4ff] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-sm font-medium text-slate-600">Loading results...</p>
+        </div>
+      </div>
+    }>
+      <ResultPageContent />
+    </Suspense>
   );
 }
