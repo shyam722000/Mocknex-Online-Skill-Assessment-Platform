@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, Suspense } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import loginIllustration from "@/public/login-1.png";
@@ -8,7 +8,7 @@ import loginBG from "@/public/login-bg.png";
 import logo from "@/public/logo.png";
 import { apiPostsignup } from "../lib/api"; // ✅ new helper for FormData
 
-export default function SignupPage() {
+function SignupPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -93,9 +93,8 @@ export default function SignupPage() {
         localStorage.setItem("refresh_token", res.refresh_token);
       }
       if (res.user?.name) {
-  localStorage.setItem("user_name", res.user.name);
-}
-
+        localStorage.setItem("user_name", res.user.name);
+      }
 
       router.push("/");
     } catch (err) {
@@ -263,5 +262,20 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-sm font-medium text-slate-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SignupPageContent />
+    </Suspense>
   );
 }
