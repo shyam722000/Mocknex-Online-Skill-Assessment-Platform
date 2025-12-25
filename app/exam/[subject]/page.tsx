@@ -266,7 +266,7 @@ export default function ExamPage() {
 
   /* ---------- ACTIONS ---------- */
   const handleOptionChange = (optionId: string | number) => {
-    dispatch(optionSelected(String(optionId)));
+    dispatch(optionSelected((optionId as any)));
   };
 
   const goToQuestion = (index: number) => {
