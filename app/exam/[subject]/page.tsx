@@ -26,7 +26,13 @@ import {
 const SECONDS_PER_QUESTION = 30;
 
 // Helper function to save exam data to session storage
-const saveExamDataToSession = (questions: any[], answers: any[], statusMap: any) => {
+// Replace the saveExamDataToSession function with this corrected version:
+
+const saveExamDataToSession = (
+  questions: any[], 
+  answers: Record<number, number | null>, 
+  statusMap: Record<number, string>
+) => {
   const examData = {
     questions: questions.map((q, idx) => ({
       question_id: q.question_id,
@@ -44,7 +50,6 @@ const saveExamDataToSession = (questions: any[], answers: any[], statusMap: any)
   
   sessionStorage.setItem('examResults', JSON.stringify(examData));
 };
-
 export default function ExamPage() {
   const router = useRouter();
   const { subject } = useParams();
