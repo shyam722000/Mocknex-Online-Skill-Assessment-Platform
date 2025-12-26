@@ -100,6 +100,7 @@ const loginAsAdmin = (username: string, password: string): boolean => {
 
     // Clear admin session
     sessionStorage.removeItem("isAdmin");
+       sessionStorage.removeItem("examResults");
     setIsAdmin(false);
   };
 

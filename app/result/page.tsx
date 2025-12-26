@@ -26,109 +26,150 @@ function ResultPageContent() {
       try {
         setLoading(true);
 
-        // Fetch attempt data
-        const { data: attempt } = await supabase
-          .from("attempts")
-          .select("*")
-          .eq("id", attemptId)
-          .single();
+        // ✅ TRY TO LOAD FROM SESSION STORAGE FIRST
+        const sessionData = sessionStorage.getItem('examResults');
+        
+        if (sessionData) {
+          const examData = JSON.parse(sessionData);
+          
+          // Fetch only attempt summary data from database
+          const { data: attempt } = await supabase
+            .from("attempts")
+            .select("*")
+            .eq("id", attemptId)
+            .single();
 
-        if (!attempt) {
-          setError("Attempt not found");
-          return;
-        }
-
-        setAttemptData(attempt);
-
-        // Fetch subject
-        const { data: subjectRow } = await supabase
-          .from("subjects")
-          .select("id")
-          .eq("slug", attempt.subject)
-          .single();
-
-        // Add null check for subjectRow
-        if (!subjectRow) {
-          setError("Subject not found");
-          return;
-        }
-
-        // Fetch questions with options
-        const { data: questionsData } = await supabase
-          .from("questions")
-          .select(`
-            id,
-            question,
-            comprehension,
-            image_url,
-            correct_option_id,
-            options ( id, option )
-          `)
-          .eq("subject_id", subjectRow.id)
-          .order("created_at");
-
-        // Fetch user's answers
-        const { data: userAnswers } = await supabase
-          .from("user_answers")
-          .select("question_id, selected_option_id")
-          .eq("attempt_id", attemptId);
-
-        console.log("User Answers from DB:", userAnswers);
-        console.log("Questions Data:", questionsData);
-
-        // Create a map of user's answers
-        const answersMap: Record<string, string> = {};
-        userAnswers?.forEach(a => {
-          answersMap[String(a.question_id)] = String(a.selected_option_id);
-        });
-
-        console.log("Answers Map:", answersMap);
-
-        // Format questions with user answers and correct answers
-        const formatted = questionsData?.map((q, index) => {
-          const userSelectedOptionId = answersMap[String(q.id)];
-
-          console.log(`Question ${q.id}:`, {
-            correctOptionId: q.correct_option_id,
-            userSelectedOptionId,
-            options: q.options.map((o: any) => ({ id: o.id, option: o.option }))
-          });
-
-          // Find correct option
-          const correctOption = q.options.find(
-            (o: any) => String(o.id) === String(q.correct_option_id)
-          );
-
-          // Find user's selected option
-          const userSelectedOption = userSelectedOptionId
-            ? q.options.find((o: any) => String(o.id) === String(userSelectedOptionId))
-            : null;
-
-          // Determine status
-          let status = "notAttended";
-          if (userSelectedOptionId) {
-            status = String(userSelectedOptionId) === String(q.correct_option_id) ? "correct" : "wrong";
+          if (!attempt) {
+            setError("Attempt not found");
+            return;
           }
 
-          console.log(`Question ${q.id} Status:`, status);
+          setAttemptData(attempt);
 
-          return {
-            id: q.id,
-            number: index + 1,
-            question: q.question,
-            comprehension: q.comprehension,
-            image_url: q.image_url,
-            options: q.options,
-            correctOptionId: String(q.correct_option_id),
-            userSelectedOptionId: userSelectedOptionId ? String(userSelectedOptionId) : null,
-            correctOption,
-            userSelectedOption,
-            status,
-          };
-        }) || [];
+          // Format questions from session storage
+          const formatted = examData.questions.map((q: any) => {
+            const userSelectedOptionId = q.userAnswer ? String(q.userAnswer) : null;
+            const correctOptionId = String(q.correct_option_id);
 
-        console.log("Formatted Questions:", formatted);
-        setQuestions(formatted);
+            // Find correct option
+            const correctOption = q.options.find(
+              (o: any) => String(o.id) === correctOptionId
+            );
+
+            // Find user's selected option
+            const userSelectedOption = userSelectedOptionId
+              ? q.options.find((o: any) => String(o.id) === userSelectedOptionId)
+              : null;
+
+            // Determine status
+            let status = "notAttended";
+            if (userSelectedOptionId) {
+              status = userSelectedOptionId === correctOptionId ? "correct" : "wrong";
+            }
+
+            return {
+              id: q.question_id,
+              number: q.number,
+              question: q.question,
+              comprehension: q.comprehension,
+              image_url: q.image_url,
+              options: q.options,
+              correctOptionId,
+              userSelectedOptionId,
+              correctOption,
+              userSelectedOption,
+              status,
+            };
+          });
+
+          setQuestions(formatted);
+          
+          // Clear session storage after loading
+          sessionStorage.removeItem('examResults');
+          
+        } else {
+          // ✅ FALLBACK TO DATABASE IF SESSION STORAGE IS EMPTY
+          const { data: attempt } = await supabase
+            .from("attempts")
+            .select("*")
+            .eq("id", attemptId)
+            .single();
+
+          if (!attempt) {
+            setError("Attempt not found");
+            return;
+          }
+
+          setAttemptData(attempt);
+
+          const { data: subjectRow } = await supabase
+            .from("subjects")
+            .select("id")
+            .eq("slug", attempt.subject)
+            .single();
+
+          if (!subjectRow) {
+            setError("Subject not found");
+            return;
+          }
+
+          const { data: questionsData } = await supabase
+            .from("questions")
+            .select(`
+              id,
+              question,
+              comprehension,
+              image_url,
+              correct_option_id,
+              options ( id, option )
+            `)
+            .eq("subject_id", subjectRow.id)
+            .order("created_at");
+
+          const { data: userAnswers } = await supabase
+            .from("user_answers")
+            .select("question_id, selected_option_id")
+            .eq("attempt_id", attemptId);
+
+          const answersMap: Record<string, string> = {};
+          userAnswers?.forEach(a => {
+            answersMap[String(a.question_id)] = String(a.selected_option_id);
+          });
+
+          const formatted = questionsData?.map((q, index) => {
+            const userSelectedOptionId = answersMap[String(q.id)];
+            const correctOptionId = String(q.correct_option_id);
+
+            const correctOption = q.options.find(
+              (o: any) => String(o.id) === correctOptionId
+            );
+
+            const userSelectedOption = userSelectedOptionId
+              ? q.options.find((o: any) => String(o.id) === userSelectedOptionId)
+              : null;
+
+            let status = "notAttended";
+            if (userSelectedOptionId) {
+              status = userSelectedOptionId === correctOptionId ? "correct" : "wrong";
+            }
+
+            return {
+              id: q.id,
+              number: index + 1,
+              question: q.question,
+              comprehension: q.comprehension,
+              image_url: q.image_url,
+              options: q.options,
+              correctOptionId,
+              userSelectedOptionId: userSelectedOptionId || null,
+              correctOption,
+              userSelectedOption,
+              status,
+            };
+          }) || [];
+
+          setQuestions(formatted);
+        }
       } catch (err) {
         console.error("Error loading results:", err);
         setError("Failed to load result");
@@ -192,125 +233,109 @@ function ResultPageContent() {
               </h2>
 
               <div className="space-y-4">
-                {questions.map((q) => {
-                  console.log(`Rendering Question ${q.number}:`, {
-                    correctOptionId: q.correctOptionId,
-                    userSelectedOptionId: q.userSelectedOptionId,
-                    status: q.status
-                  });
-
-                  return (
-                    <div
-                      key={q.id}
-                      className={`border rounded-md p-3 ${getStatusColor(q.status)}`}
-                    >
-                      {/* Question Header */}
-                      <div className="flex items-start gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-[#12324a] text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
-                          {q.number}
-                        </div>
-
-                        <div className="flex-1 text-sm">
-                          {q.comprehension && (
-                            <div className="bg-blue-50 border border-blue-200 rounded p-2 mb-2 text-xs text-slate-700">
-                              <span className="font-medium text-blue-900">
-                                Comprehension:
-                              </span>{" "}
-                              {q.comprehension}
-                            </div>
-                          )}
-
-                          <p className="text-slate-900 leading-snug font-semibold">
-                            {q.question}
-                          </p>
-                        </div>
-
-                        <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                            q.status === "correct"
-                              ? "bg-green-500 text-white"
-                              : q.status === "wrong"
-                              ? "bg-red-500 text-white"
-                              : "bg-gray-400 text-white"
-                          }`}
-                        >
-                          {getStatusIcon(q.status)}
-                        </div>
+                {questions.map((q) => (
+                  <div
+                    key={q.id}
+                    className={`border rounded-md p-3 ${getStatusColor(q.status)}`}
+                  >
+                    {/* Question Header */}
+                    <div className="flex items-start gap-2 mb-2">
+                      <div className="w-6 h-6 rounded-full bg-[#12324a] text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                        {q.number}
                       </div>
 
-                      {/* Options */}
-                      <div className="space-y-1.5 ml-8">
-                        {q.options.map((option: any, optIndex: number) => {
-                          const optionIdStr = String(option.id);
-                          const isCorrectOption = optionIdStr === q.correctOptionId;
-                          const isUserSelected = optionIdStr === q.userSelectedOptionId;
+                      <div className="flex-1 text-sm">
+                        {q.comprehension && (
+                          <div className="bg-blue-50 border border-blue-200 rounded p-2 mb-2 text-xs text-slate-700">
+                            <span className="font-medium text-blue-900">
+                              Comprehension:
+                            </span>{" "}
+                            {q.comprehension}
+                          </div>
+                        )}
 
-                          console.log(`Option ${optIndex}:`, {
-                            optionId: optionIdStr,
-                            isCorrect: isCorrectOption,
-                            isUserSelected,
-                            correctOptionId: q.correctOptionId,
-                            userSelectedOptionId: q.userSelectedOptionId
-                          });
-
-                          let optionClass = "p-2.5 rounded border text-xs flex justify-between items-center transition-all ";
-
-                          // Highlight correct answer in green
-                          if (isCorrectOption) {
-                            optionClass += "bg-green-50 border-green-500 border-2 font-semibold";
-                          }
-                          // Highlight user's wrong answer in red
-                          else if (isUserSelected && q.status === "wrong") {
-                            optionClass += "bg-red-50 border-red-500 border-2 font-semibold";
-                          }
-                          // Highlight user's correct answer
-                          else if (isUserSelected && q.status === "correct") {
-                            optionClass += "bg-green-50 border-green-500 border-2 font-semibold";
-                          }
-                          // Default styling for other options
-                          else {
-                            optionClass += "bg-white border-gray-200";
-                          }
-
-                          return (
-                            <div key={option.id} className={optionClass}>
-                              <span className={`${(isCorrectOption || isUserSelected) ? 'text-slate-900' : 'text-slate-600'}`}>
-                                <span className="font-bold">{String.fromCharCode(65 + optIndex)}.</span> {option.option}
-                              </span>
-
-                              <div className="flex items-center gap-2">
-                                {isCorrectOption && (
-                                  <span className="text-green-700 font-bold text-[10px] flex items-center gap-1 bg-green-100 px-2 py-0.5 rounded-full">
-                                    <span className="text-xs">✓</span>
-                                    Correct
-                                  </span>
-                                )}
-                                {isUserSelected && q.status === "wrong" && (
-                                  <span className="text-red-700 font-bold text-[10px] flex items-center gap-1 bg-red-100 px-2 py-0.5 rounded-full">
-                                    <span className="text-xs">✗</span>
-                                    Your Choice
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
+                        <p className="text-slate-900 leading-snug font-semibold">
+                          {q.question}
+                        </p>
                       </div>
 
-                      {/* Additional info for wrong answers */}
-                      {q.status === "wrong" && q.userSelectedOption && q.correctOption && (
-                        <div className="mt-3 ml-8 p-2.5 bg-amber-50 border-l-4 border-amber-400 rounded text-xs">
-                          <p className="text-amber-900">
-                            <span className="font-bold">📝 Review:</span> You selected{" "}
-                            <span className="font-bold text-red-600">"{q.userSelectedOption.option}"</span>, 
-                            but the correct answer is{" "}
-                            <span className="font-bold text-green-600">"{q.correctOption.option}"</span>
-                          </p>
-                        </div>
-                      )}
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                          q.status === "correct"
+                            ? "bg-green-500 text-white"
+                            : q.status === "wrong"
+                            ? "bg-red-500 text-white"
+                            : "bg-gray-400 text-white"
+                        }`}
+                      >
+                        {getStatusIcon(q.status)}
+                      </div>
                     </div>
-                  );
-                })}
+
+                    {/* Options */}
+                    <div className="space-y-1.5 ml-8">
+                      {q.options.map((option: any, optIndex: number) => {
+                        const optionIdStr = String(option.id);
+                        const isCorrectOption = optionIdStr === q.correctOptionId;
+                        const isUserSelected = optionIdStr === q.userSelectedOptionId;
+
+                        let optionClass = "p-2.5 rounded border text-xs flex justify-between items-center transition-all ";
+
+                        // Highlight correct answer in green
+                        if (isCorrectOption) {
+                          optionClass += "bg-green-50 border-green-500 border-2 font-semibold";
+                        }
+                        // Highlight user's wrong answer in red
+                        else if (isUserSelected && q.status === "wrong") {
+                          optionClass += "bg-red-50 border-red-500 border-2 font-semibold";
+                        }
+                        // Highlight user's correct answer
+                        else if (isUserSelected && q.status === "correct") {
+                          optionClass += "bg-green-50 border-green-500 border-2 font-semibold";
+                        }
+                        // Default styling for other options
+                        else {
+                          optionClass += "bg-white border-gray-200";
+                        }
+
+                        return (
+                          <div key={option.id} className={optionClass}>
+                            <span className={`${(isCorrectOption || isUserSelected) ? 'text-slate-900' : 'text-slate-600'}`}>
+                              <span className="font-bold">{String.fromCharCode(65 + optIndex)}.</span> {option.option}
+                            </span>
+
+                            <div className="flex items-center gap-2">
+                              {isCorrectOption && (
+                                <span className="text-green-700 font-bold text-[10px] flex items-center gap-1 bg-green-100 px-2 py-0.5 rounded-full">
+                                  <span className="text-xs">✓</span>
+                                  Correct
+                                </span>
+                              )}
+                              {isUserSelected && q.status === "wrong" && (
+                                <span className="text-red-700 font-bold text-[10px] flex items-center gap-1 bg-red-100 px-2 py-0.5 rounded-full">
+                                  <span className="text-xs">✗</span>
+                                  Your Choice
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Additional info for wrong answers */}
+                    {q.status === "wrong" && q.userSelectedOption && q.correctOption && (
+                      <div className="mt-3 ml-8 p-2.5 bg-amber-50 border-l-4 border-amber-400 rounded text-xs">
+                        <p className="text-amber-900">
+                          <span className="font-bold">📝 Review:</span> You selected{" "}
+                          <span className="font-bold text-red-600">"{q.userSelectedOption.option}"</span>, 
+                          but the correct answer is{" "}
+                          <span className="font-bold text-green-600">"{q.correctOption.option}"</span>
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -318,7 +343,7 @@ function ResultPageContent() {
           {/* RIGHT SIDE – STATS */}
           <div className="lg:col-span-4 xl:col-span-3">
             <div className="sticky top-8 space-y-4">
-    {/* Performance Indicator */}
+              {/* Performance Indicator */}
               <div className="bg-white rounded-xl p-4 shadow text-center">
                 <p className="text-xs text-slate-600 mb-2">Overall Performance</p>
                 <div className="relative pt-1">
@@ -407,11 +432,8 @@ function ResultPageContent() {
                   </button>
                 </div>
               </div>
-
-          
             </div>
           </div>
-
         </div>
       </div>
     </div>

@@ -25,6 +25,26 @@ import {
 // Configurable time per question (in seconds)
 const SECONDS_PER_QUESTION = 30;
 
+// Helper function to save exam data to session storage
+const saveExamDataToSession = (questions: any[], answers: any[], statusMap: any) => {
+  const examData = {
+    questions: questions.map((q, idx) => ({
+      question_id: q.question_id,
+      number: q.number,
+      question: q.question,
+      comprehension: q.comprehension,
+      image_url: q.image_url,
+      correct_option_id: q.correct_option_id,
+      options: q.options,
+      userAnswer: answers[idx] || null,
+      status: statusMap[idx] || 'NOT_VISITED'
+    })),
+    timestamp: Date.now()
+  };
+  
+  sessionStorage.setItem('examResults', JSON.stringify(examData));
+};
+
 export default function ExamPage() {
   const router = useRouter();
   const { subject } = useParams();
@@ -299,6 +319,13 @@ export default function ExamPage() {
     }
   };
 
+  // ✅ FIX: Add the missing openComprehension function
+  const openComprehension = () => {
+    if (currentQuestion?.comprehension) {
+      dispatch(setShowComprehension(true));
+    }
+  };
+
   const subjectLabel =
     typeof subject === "string"
       ? subject.replace(/-/g, " ").toUpperCase()
@@ -324,6 +351,9 @@ export default function ExamPage() {
       });
 
       const notAttended = questions.length - correct - wrong;
+
+      // ✅ SAVE TO SESSION STORAGE BEFORE SUBMITTING
+      saveExamDataToSession(questions, answers, statusMap);
 
       // ✅ Save attempt with Firebase UID
       const { data: attemptData, error: attemptError } = await supabase
@@ -378,12 +408,6 @@ export default function ExamPage() {
       dispatch(setSubmitError("Something went wrong during submission."));
     } finally {
       dispatch(setIsSubmitting(false));
-    }
-  };
-
-  const openComprehension = () => {
-    if (currentQuestion?.comprehension) {
-      dispatch(setShowComprehension(true));
     }
   };
 
@@ -446,6 +470,30 @@ export default function ExamPage() {
         </div>
       )}
 
+      {/* Comprehension Modal */}
+      {showComprehension && currentQuestion?.comprehension && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+              <h2 className="text-xl font-bold text-white">Comprehension Passage</h2>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                {currentQuestion.comprehension}
+              </p>
+            </div>
+            <div className="p-4 border-t">
+              <button
+                onClick={() => dispatch(setShowComprehension(false))}
+                className="w-full py-2.5 bg-gradient-to-r from-slate-700 to-slate-900 text-white rounded-lg hover:from-slate-800 hover:to-black transition-all shadow-md font-medium"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="flex-1 flex px-3 py-3 overflow-hidden">
         <div className="flex-1 bg-white/80 backdrop-blur-sm rounded-xl border border-slate-200 shadow-xl flex overflow-hidden">
           {/* Question Area */}
@@ -454,6 +502,7 @@ export default function ExamPage() {
             <div className="px-4 py-3 border-b border-slate-200 flex justify-between items-center bg-gradient-to-r from-slate-50 to-blue-50">
               <button
                 onClick={openComprehension}
+                disabled={!currentQuestion?.comprehension}
                 className="px-3 py-1.5 text-xs bg-gradient-to-r from-slate-900 to-black text-white rounded-lg disabled:from-slate-300 disabled:to-slate-400 disabled:cursor-not-allowed hover:shadow-md transition-all font-medium"
               >
                 📘 {subjectLabel}
